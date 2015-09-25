@@ -29,11 +29,6 @@ class Complex
      */
     protected suffix;
 
-    // TODO  In Zephir 0.7 we can't pass from/to arrays to str_replace,
-    //       but this will be supported from Zephir 0.8 and we can remove these properties
-    private fromReplace = ["+-", "-+", "++", "--"];
-    private toReplace = ["-", "-", "+", "+"];
-
     /**
      * Validates whether the argument is a valid complex number, converting scalar or array values if possible
      *
@@ -43,21 +38,14 @@ class Complex
      */
     protected function parseComplex(complexNumber) -> array
     {
-        // TODO  In Zephir 0.7 we can't pass from/to arrays to str_replace,
-        //       but this will be supported from Zephir 0.8 and we can remove key and value
-        var validComplex, complexParts, imaginary, key, value;
+        var validComplex, complexParts, imaginary;
 
         // Test for real number, with no imaginary part
         if is_numeric(complexNumber) {
             return [complexNumber, 0.0, null];
         }
 
-        // Fix silly human errors
-        // TODO  In Zephir 0.7 we can't pass from/to arrays to str_replace, but this will be supported from Zephir 0.8
-        //       let complexNumber = str_replace(["+-", "-+", "++", "--"], ["-", "-", "+", "+"], complexNumber);
-        for key, value in this->fromReplace {
-            let complexNumber = str_replace(value, this->toReplace[key], complexNumber);
-        }
+        let complexNumber = str_replace(["+-", "-+", "++", "--"], ["-", "-", "+", "+"], complexNumber);
 
         // Basic validation of string, to parse out real and imaginary parts, and any suffix
         let validComplex = preg_match(
